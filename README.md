@@ -10,6 +10,7 @@ Algorithms
 * cryptonight-light (v0, v1)
 * cryptonight-heavy (v0, xhv, tube)
 * cryptonight-pico (trtl)
+* cryptonight-arqma (arqma)
 
 Usage
 -----
@@ -17,13 +18,13 @@ Usage
 Install
 
 ```bash
-npm install https://github.com/MoneroOcean/node-cryptonight-hashing.git
+npm install https://github.com/malbit/node-cryptonight-arqma-hashing.git
 ```
 
 So far this native Node.js addon can do the following hashing algos
 
 ```javascript
-var multiHashing = require('cryptonight-hashing');
+var multiHashing = require('cryptonight-arqma-hashing');
 
 var algorithms = ['cryptonight', 'cryptonight_light', 'cryptonight_heavy' ];
 
