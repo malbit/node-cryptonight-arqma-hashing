@@ -4,22 +4,26 @@
     "main": "cryptonight-hashing",
     "author": {
         "name": "Multiple",
-        "email": "Check The Git Repo"
+        "email": "support@arqma.com"
     },
     "license": "GPL-3.0-or-later",
     "repository": {
         "type": "git",
-        "url": "https://github.com/MoneroOcean/node-cryptonight-hashing.git"
+        "url": "https://github.com/malbit/node-cryptonight-hashing.git"
     },
     "dependencies": {
         "bindings": "*",
         "nan":      "^2.8.0"
+    },
+    "engines": {
+        "node": ">=8.11.3"
     },
     "keywords": [
         "cryptonight",
         "cryptonote",
         "forknote",
         "bytecoin",
-        "monero"
+        "monero",
+        "arqma"
     ]
 }

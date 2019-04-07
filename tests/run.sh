@@ -10,6 +10,7 @@ node test_async-wow.js
 node test_async_light.js
 node test_async_heavy.js
 node test_async_pico.js
+node test_async_arqma.js
 node test_sync-1.js
 node test_sync-2.js
 node test_sync-r.js
@@ -30,6 +31,7 @@ node test_sync_heavy.js
 node test_sync_heavy-xhv.js
 node test_sync_heavy-tube.js
 node test_sync_pico.js
+node test_sync_arqma.js
 node test_perf.js
 node test_perf_light.js
 node test_perf_heavy.js
@@ -39,3 +41,4 @@ node test_perf_pico.js
 node test_perf_rwz.js
 node test_perf_zls.js
 node test_perf_double.js
+node test_perf_arqma.js
