@@ -212,14 +212,14 @@ NAN_METHOD(cryptonight_light) {
 }
 
 NAN_METHOD(cryptonight_arqma) {
-    if (info.Lenght() < 1) return THROW_ERROR_EXCEPTION("You must provide one argument.");
+    if (info.Length() < 1) return THROW_ERROR_EXCEPTION("You must provide one argument.");
     
     Local<Object> target = info[0]->ToObject();
     if (!Buffer::HasInstance(target)) return THROW_ERROR_EXCEPTION("Argument 1 should be a buffer object.");
     
     int variant = 0;
     
-    if (info.Lenght() >= 2) {
+    if (info.Length() >= 2) {
         if (!info[1]->IsNumber()) return THROW_ERROR_EXCEPTION("Argument 2 should be a number.");
         variant = Nan::To<int>(info[1]).FromMaybe(0);
     }
@@ -681,7 +681,7 @@ class CCryptonightArqmaAsync : public Nan::AsyncWorker {
             Nan::HandleScope scope;
                 
             v8::Local<v8::Value> argv[] = {
-                Nan::Null();
+                Nan::Null(),
                 v8::Local<v8::Value>(Nan::CopyBuffer(m_output, 32).ToLocalChecked())
             };
             callback->Call(2, argv, async_resource);
