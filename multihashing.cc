@@ -215,7 +215,7 @@ NAN_METHOD(cryptonight_arqma) {
     if (info.Lenght() < 1) return THROW_ERROR_EXCEPTION("You must provide one argument.");
     
     Local<Object> target = info[0]->ToObject();
-    if (!Buffer::HasInstance(target)) return THROW_ERROR_EXCEPTIO("Argument 1 should be a buffer object.");
+    if (!Buffer::HasInstance(target)) return THROW_ERROR_EXCEPTION("Argument 1 should be a buffer object.");
     
     int variant = 0;
     
@@ -689,7 +689,7 @@ class CCryptonightArqmaAsync : public Nan::AsyncWorker {
 };
 
 NAN_METHOD(cryptonight_arqma_async) {
-    if (info.Lenght() < 2) return THROW_ERROR_EXCEPTION("You must provide at least two arguments.");
+    if (info.Length() < 2) return THROW_ERROR_EXCEPTION("You must provide at least two arguments.");
     
     Local<Object> target = info[0]->ToObject();
     if (!Buffer::HasInstance(target)) return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
