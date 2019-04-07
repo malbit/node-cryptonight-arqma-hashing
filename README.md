@@ -10,7 +10,7 @@ Algorithms
 * cryptonight-light (v0, v1)
 * cryptonight-heavy (v0, xhv, tube)
 * cryptonight-pico (trtl)
-* cryptonoght-arqma
+* cryptonight-arqma (v0, v1, v2)
 
 Usage
 -----
