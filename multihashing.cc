@@ -218,10 +218,16 @@ NAN_METHOD(cryptonight_arqma) {
     if (!Buffer::HasInstance(target)) return THROW_ERROR_EXCEPTION("Argument 1 should be a buffer object.");
 
     int variant = 0;
+    uint64_t height = 0;
 
     if (info.Length() >= 2) {
         if (!info[1]->IsNumber()) return THROW_ERROR_EXCEPTION("Argument 2 should be a number.");
         variant = Nan::To<int>(info[1]).FromMaybe(0);
+    }
+    
+    if (info.Length() >= 3) {
+        if (!info[2]->IsNumber()) return THROW_ERROR_EXCEPTION("Argument 3 should be a number");
+        height = Nan::To<unsigned int>(info[2]).FromMaybe(0);
     }
 
     char output[32];
@@ -230,29 +236,30 @@ NAN_METHOD(cryptonight_arqma) {
         case 0:
 #if !SOFT_AES && defined(CPU_INTEL)
                 #warning Using IvyBridge assembler implementation
-                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #elif !SOFT_AES && defined(CPU_AMD)
                 #warning Using Ryzen assembler implementation
-                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #elif !SOFT_AES && defined(CPU_AMD_OLD)
                 #warning Using Bulldozer assembler implementation
-                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #else
-                cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #endif
                 break;
        default:
 #if !SOFT_AES && defined(CPU_INTEL)
                 #warning Using IvyBridge assembler implementation
-                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #elif !SOFT_AES && defined(CPU_AMD)
                 #warning Using Ryzen assembler implementation
-                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #elif !SOFT_AES && defined(CPU_AMD_OLD)
                 #warning Using Bulldozer assembler implementation
-                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
 #else
-                cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, 0);
+                cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(Buffer::Data(target)), Buffer::Length(target), reinterpret_cast<uint8_t*>(output), &ctx, height);
+                
 #endif
     }
 
@@ -647,13 +654,14 @@ class CCryptonightArqmaAsync : public Nan::AsyncWorker {
         const char* const m_input;
         const uint32_t m_input_len;
         const int m_variant;
+        const uint64_t m_height;
         char m_output[32];
 
     public:
 
-        CCryptonightArqmaAsync(Nan::Callback* const callback, const char* const input, const uint32_t input_len, const int variant)
+        CCryptonightArqmaAsync(Nan::Callback* const callback, const char* const input, const uint32_t input_len, const int variant, const uint64_t height)
             : Nan::AsyncWorker(callback), m_ctx(static_cast<cryptonight_ctx *>(_mm_malloc(sizeof(cryptonight_ctx), 16))),
-              m_input(input), m_input_len(input_len), m_variant(variant) {
+              m_input(input), m_input_len(input_len), m_variant(variant), m_height(height) {
             m_ctx->memory = static_cast<uint8_t *>(_mm_malloc(xmrig::CRYPTONIGHT_ARQMA_MEMORY, 4096));
         }
 
@@ -666,24 +674,24 @@ class CCryptonightArqmaAsync : public Nan::AsyncWorker {
             switch (m_variant) {
                 case 0: 
 #if !SOFT_AES && defined(CPU_INTEL)
-                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #elif !SOFT_AES && defined(CPU_AMD)
-                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #elif !SOFT_AES && defined(CPU_AMD_OLD)
-                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #else
-                        cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #endif
                         break;
                default:
 #if !SOFT_AES && defined(CPU_INTEL)
-                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_INTEL>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #elif !SOFT_AES && defined(CPU_AMD)
-                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_RYZEN>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #elif !SOFT_AES && defined(CPU_AMD_OLD)
-                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_ARQMA, xmrig::VARIANT_ARQ, xmrig::ASM_BULLDOZER>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #else
-                        cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, 0);
+                        cryptonight_single_hash<xmrig::CRYPTONIGHT_ARQMA, SOFT_AES, xmrig::VARIANT_ARQ>(reinterpret_cast<const uint8_t*>(m_input), m_input_len, reinterpret_cast<uint8_t*>(m_output), &m_ctx, m_height);
 #endif
             }
         }
@@ -706,18 +714,22 @@ NAN_METHOD(cryptonight_arqma_async) {
     if (!Buffer::HasInstance(target)) return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
 
     int variant = 0;
+    uint64_t height = 0;
 
-    int callback_arg_num;
+    int callback_arg_num = 1;
     if (info.Length() >= 3) {
         if (!info[1]->IsNumber()) return THROW_ERROR_EXCEPTION("Argument 2 should be a number");
         variant = Nan::To<int>(info[1]).FromMaybe(0);
         callback_arg_num = 2;
-    } else {
-        callback_arg_num = 1;
+    }
+    if (info.Length() >= 4) {
+        if (!info[2]->IsNumber()) return THROW_ERROR_EXCEPTION("Argument 3 should be a number");
+        variant = Nan::To<unsigned int>(info[2]).FromMaybe(0);
+        callback_arg_num = 3;
     }
 
     Callback *callback = new Nan::Callback(info[callback_arg_num].As<v8::Function>());
-    Nan::AsyncQueueWorker(new CCryptonightArqmaAsync(callback, Buffer::Data(target), Buffer::Length(target), variant));
+    Nan::AsyncQueueWorker(new CCryptonightArqmaAsync(callback, Buffer::Data(target), Buffer::Length(target), variant, height));
 }
 
 class CCryptonightPicoAsync : public Nan::AsyncWorker {
