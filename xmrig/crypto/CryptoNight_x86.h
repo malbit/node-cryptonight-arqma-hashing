@@ -700,7 +700,7 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
 #ifndef XMRIG_NO_ASM
     }
 #endif
-        
+
     cn_implode_scratchpad<ALGO, MEM, SOFT_AES>((__m128i*) ctx[0]->memory, (__m128i*) ctx[0]->state);
 
     xmrig::keccakf(h0, 24);
@@ -766,6 +766,11 @@ extern xmrig::CpuThread::cn_mainloop_fun        cn_trtl_mainloop_ivybridge_asm;
 extern xmrig::CpuThread::cn_mainloop_fun        cn_trtl_mainloop_ryzen_asm;
 extern xmrig::CpuThread::cn_mainloop_fun        cn_trtl_mainloop_bulldozer_asm;
 extern xmrig::CpuThread::cn_mainloop_double_fun cn_trtl_double_mainloop_sandybridge_asm;
+
+extern xmrig::CpuThread::cn_mainloop_fun        cn_arqma_mainloop_ivybridge_asm;
+extern xmrig::CpuThread::cn_mainloop_fun        cn_arqma_mainloop_ryzen_asm;
+extern xmrig::CpuThread::cn_mainloop_fun        cn_arqma_mainloop_bulldozer_asm;
+extern xmrig::CpuThread::cn_mainloop_double_fun cn_arqma_double_mainloop_sandybridge_asm;
 
 extern xmrig::CpuThread::cn_mainloop_fun        cn_zls_mainloop_ivybridge_asm;
 extern xmrig::CpuThread::cn_mainloop_fun        cn_zls_mainloop_ryzen_asm;
@@ -855,6 +860,17 @@ inline void cryptonight_single_hash_asm(const uint8_t *__restrict__ input, size_
             cn_trtl_mainloop_bulldozer_asm(ctx[0]);
         }
     }
+    else if (VARIANT == xmrig::VARIANT_ARQ) {
+        if (ASM == xmrig::ASM_INTEL) {
+            cn_arqma_mainloop_ivybridge_asm(ctx[0]);
+        }
+        else if (ASM == xmrig::ASM_RYZEN) {
+            cn_arqma_mainloop_ryzen_asm(ctx[0]);
+        }
+        else {
+            cn_arqma_mainloop_bulldozer_asm(ctx[0]);
+        }
+    }
     else if (VARIANT == xmrig::VARIANT_RWZ) {
         cnv2_rwz_mainloop_asm(ctx[0]);
     }
@@ -917,6 +933,9 @@ inline void cryptonight_double_hash_asm(const uint8_t *__restrict__ input, size_
     }
     else if (VARIANT == xmrig::VARIANT_TRTL) {
         cn_trtl_double_mainloop_sandybridge_asm(ctx[0], ctx[1]);
+    }
+    else if (VARIANT == xmrig::VARIANT_ARQ) {
+        cn_arqma_double_mainloop_sandybridge_asm(ctx[0], ctx[1]);
     }
     else if (VARIANT == xmrig::VARIANT_RWZ) {
         cnv2_rwz_double_mainloop_asm(ctx[0], ctx[1]);

@@ -80,6 +80,7 @@ enum Variant {
     VARIANT_RWZ    = 14, // CryptoNight variant 2 with 3/4 iterations and reversed shuffle operation (Graft)
     VARIANT_ZLS    = 15, // CryptoNight variant 2 with 3/4 iterations (Zelerius)
     VARIANT_DOUBLE = 16, // CryptoNight variant 2 with double iterations (X-CASH)
+    VARIANT_ARQ    = 17,
     VARIANT_MAX
 };
 
