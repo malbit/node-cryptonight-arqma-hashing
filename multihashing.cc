@@ -644,13 +644,13 @@ class CCryptonightArqmaAsync : public Nan::AsyncWorker {
 
     public:
 
-        CCryptonightAsync(Nan::Callback* const callback, const char* const input, const uint32_t input_len, const int variant)
+        CCryptonightArqmaAsync(Nan::Callback* const callback, const char* const input, const uint32_t input_len, const int variant)
             : Nan::AsyncWorker(callback), m_ctx(static_cast<cryptonight_ctx *>(_mm_malloc(sizeof(cryptonight_ctx), 16))),
               m_input(input), m_input_len(input_len), m_variant(variant) {
             m_info = Mem::create(&m_ctx, xmrig::CRYPTONIGHT_ARQMA_MEMORY, 1);
         }
 
-        ~CCryptonightAsync() {
+        ~CCryptonightArqmaAsync() {
             Mem::release(&m_ctx, 1, m_info);
         }
 
